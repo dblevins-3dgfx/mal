@@ -86,7 +86,7 @@ IMPLS = ada awk bash basic c d chuck clojure coffee common-lisp cpp crystal cs d
 	haxe io java julia js kotlin logo lua make mal ocaml matlab miniMAL \
 	nim objc objpascal perl perl6 php pil plpgsql plsql powershell ps \
 	python r racket rexx rpython ruby rust scala scheme skew swift swift3 tcl \
-	ts vb vhdl vimscript livescript elm
+	ts vb vhdl vimscript livescript elm dblev
 
 EXTENSION = .mal
 
@@ -233,6 +233,7 @@ vimscript_STEP_TO_PROG = vimscript/$($(1)).vim
 guile_STEP_TO_PROG =   guile/$($(1)).scm
 livescript_STEP_TO_PROG = livescript/$($(1)).js
 elm_STEP_TO_PROG =     elm/$($(1)).js
+dblevTEP_TO_PROG =     dblev/$($(1))
 
 
 # Needed some argument munging
