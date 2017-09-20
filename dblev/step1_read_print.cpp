@@ -25,7 +25,7 @@ int main(int, char**)
 /////////////////////////////////////////////////////////////////////////////////
 const str_t rep(const str_t& str)
 {
-  return PRINT(EVAL(READ(str),""));
+  return PRINT(EVAL(READ(str), ""));
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -45,5 +45,3 @@ const str_t PRINT(const MalDataPtr exp)
 {
   return printer::pr_str(exp);
 }
-
-

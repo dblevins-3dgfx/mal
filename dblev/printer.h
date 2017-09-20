@@ -5,8 +5,8 @@
 /////////////////////////////////////////////////////////////////////////////////
 class printer
 {
- public:
-	 static const str_t pr_str(const MalDataPtr ast);
+public:
+  static const str_t pr_str(const MalDataPtr ast);
 
-  private:
+private:
 };
