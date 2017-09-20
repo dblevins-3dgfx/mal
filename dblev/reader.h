@@ -30,7 +30,7 @@ class reader
 
   static bool isNum(const token_t& tok)
   {
-	  return !tok.empty() && std::find_if(tok.begin(), tok.end(), [](auto c) 
+	  return !tok.empty() && std::find_if(tok.begin(), tok.end(), [](char c) 
 	  { 
 		  return !std::isdigit(c); 
 	  }) == tok.end();

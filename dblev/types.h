@@ -66,7 +66,7 @@ public:
 	{}
 
 	MalType GetType() override { return number; }
-	const str_t GetPrStr() override { char buffer[16];  return str_t(itoa(m_num, buffer, 10)); }
+	const str_t GetPrStr() override { char buffer[16];  return str_t( std::to_string(m_num) ); }
 
 private:
 	int m_num;
