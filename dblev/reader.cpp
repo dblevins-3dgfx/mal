@@ -5,12 +5,12 @@
 #include "reader.h"
 
 /////////////////////////////////////////////////////////////////////////////////
-const MalDataPtr reader::read_str(const str_t& str)
+const MalDataPtr CReader::readStr(const str_t& str)
 {
-  reader rdr;
+  CReader rdr;
 
   rdr.tokenizer(str);
-  MalDataPtr ast = rdr.read_form();
+  MalDataPtr ast = rdr.readForm();
 
   return ast;
 }
@@ -37,7 +37,7 @@ namespace {
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void reader::tokenizer(const str_t& str)
+void CReader::tokenizer(const str_t& str)
 {
   static const std::regex re("[\\s,]*(~@|[\\[\\]{}()'`~^@]|\"(?:\\\\.|[^\\\\\"])*\"|;.*|[^\\s\\[\\]{}('\"`,;)]*)");
   std::smatch match;
@@ -47,39 +47,39 @@ void reader::tokenizer(const str_t& str)
   {
     token_t tok = match.str();
     trim(tok);
-    m_token_list.push_back(tok);
+    mTokenList.push_back(tok);
     tstr = match.suffix().str();
   }
 
-  m_curr_tok = m_token_list.begin();
+  mCurrTok = mTokenList.begin();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-MalDataPtr reader::read_form()
+MalDataPtr CReader::readForm()
 {
   MalDataPtr result;
 
   if (isOpenParen(peek()))
   {
     next(); // discard "("
-    result = read_list();
+    result = readList();
     next(); // discard ")"
   }
   else
   {
-    result = read_atom();
+    result = readAtom();
   }
 
   return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-MalDataPtr reader::read_list()
+MalDataPtr CReader::readList()
 {
-  auto list = std::make_shared<MalList>();
+  auto list = std::make_shared<CMalList>();
   while (!isCloseParen(peek()))
   {
-    auto form = read_form();
+    auto form = readForm();
     list->Add(form);
   }
 
@@ -87,18 +87,18 @@ MalDataPtr reader::read_list()
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-MalDataPtr reader::read_atom()
+MalDataPtr CReader::readAtom()
 {
   MalDataPtr result = nullptr;
 
   token_t tok = next();
   if (isNum(tok))
   {
-    result = std::make_shared<MalNumber>(tok);
+    result = std::make_shared<CMalNumber>(tok);
   }
   else
   {
-    result = std::make_shared<MalSymbol>(tok);
+    result = std::make_shared<CMalSymbol>(tok);
   }
 
   return result;

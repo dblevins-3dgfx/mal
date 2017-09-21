@@ -8,11 +8,11 @@
 typedef std::string str_t;
 typedef std::string env_t;
 
-class MalData;
-class MalList;
-typedef std::shared_ptr<MalData> MalDataPtr;
+class CMalData;
+class CMalList;
+typedef std::shared_ptr<CMalData> MalDataPtr;
 
-class MalData
+class CMalData
 {
 public:
   enum MalType {
@@ -22,54 +22,54 @@ public:
     list
   };
 
-  virtual ~MalData() {};
+  virtual ~CMalData() {};
   virtual MalType GetType() { return nil; }
-  virtual const MalList* GetMalList() const { return nullptr; }
+  virtual const CMalList* GetMalList() const { return nullptr; }
   virtual const str_t GetPrStr() { return "nil"; }
 };
 
 
-class MalList final : public MalData
+class CMalList final : public CMalData
 {
 public:
   typedef std::vector<MalDataPtr> MalDataPtrList;
   void Add(MalDataPtr data)
   {
-    m_list.push_back(data);
+    mList.push_back(data);
   }
   MalType GetType() override { return list; }
-  const MalList* GetMalList() const override { return this; }
-  const MalDataPtrList& GetList() const { return m_list; }
+  const CMalList* GetMalList() const override { return this; }
+  const MalDataPtrList& GetList() const { return mList; }
 
 private:
-  MalDataPtrList m_list;
+  MalDataPtrList mList;
 };
 
 
-class MalSymbol final : public MalData
+class CMalSymbol final : public CMalData
 {
 public:
-  MalSymbol(str_t str) :
-    m_str(str)
+  CMalSymbol(str_t str) :
+    mStr(str)
   {}
   MalType GetType() override { return symbol; }
-  const str_t GetPrStr() override { return m_str; }
+  const str_t GetPrStr() override { return mStr; }
 private:
-  str_t   m_str;
+  str_t   mStr;
 };
 
-class MalNumber final : public MalData
+class CMalNumber final : public CMalData
 {
 public:
-  MalNumber(str_t str) :
-    m_num(atoi(str.c_str()))
+  CMalNumber(str_t str) :
+    mNum(atoi(str.c_str()))
   {}
 
   MalType GetType() override { return number; }
-  const str_t GetPrStr() override { char buffer[16];  return str_t(std::to_string(m_num)); }
+  const str_t GetPrStr() override { char buffer[16];  return str_t(std::to_string(mNum)); }
 
 private:
-  int m_num;
+  int mNum;
 };
 
 

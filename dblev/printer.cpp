@@ -1,7 +1,7 @@
 #include "printer.h"
 
 /////////////////////////////////////////////////////////////////////////////////
-const str_t printer::pr_str(const MalDataPtr ast)
+const str_t CPrinter::pr_str(const MalDataPtr ast)
 {
   str_t result = "";
 

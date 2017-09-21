@@ -7,11 +7,11 @@
 #include "types.h"
 
 /////////////////////////////////////////////////////////////////////////////////
-class reader
+class CReader
 {
 public:
 
-  static const MalDataPtr read_str(const str_t& str);
+  static const MalDataPtr readStr(const str_t& str);
 
 private:
   typedef std::string token_t;
@@ -38,24 +38,24 @@ private:
 
   token_t next()
   {
-    assert(m_curr_tok != m_token_list.end());
-    token_t result = *m_curr_tok;
-    m_curr_tok++;
+    assert(mCurrTok != mTokenList.end());
+    token_t result = *mCurrTok;
+    mCurrTok++;
     return result;
   }
 
   token_t peek()
   {
-    assert(m_curr_tok != m_token_list.end());
-    return *m_curr_tok;
+    assert(mCurrTok != mTokenList.end());
+    return *mCurrTok;
   }
 
 
   void tokenizer(const str_t& str);
-  MalDataPtr read_form();
-  MalDataPtr read_list();
-  MalDataPtr read_atom();
+  MalDataPtr readForm();
+  MalDataPtr readList();
+  MalDataPtr readAtom();
 
-  token_list_t m_token_list;
-  token_list_iterator_t m_curr_tok;
+  token_list_t mTokenList;
+  token_list_iterator_t mCurrTok;
 };

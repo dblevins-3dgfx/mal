@@ -31,7 +31,7 @@ const str_t rep(const str_t& str)
 /////////////////////////////////////////////////////////////////////////////////
 const MalDataPtr READ(const str_t& str)
 {
-  return reader::read_str(str);
+  return CReader::readStr(str);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -43,5 +43,5 @@ const MalDataPtr EVAL(const MalDataPtr ast, const env_t&)
 //////////////////////////////////////////////////////////////////////////////////
 const str_t PRINT(const MalDataPtr exp)
 {
-  return printer::pr_str(exp);
+  return CPrinter::pr_str(exp);
 }
