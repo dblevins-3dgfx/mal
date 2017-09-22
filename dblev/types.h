@@ -66,7 +66,7 @@ public:
   {}
 
   MalType GetType() override { return number; }
-  const str_t GetPrStr() override { char buffer[16];  return str_t(std::to_string(mNum)); }
+  const str_t GetPrStr() override { return str_t(std::to_string(mNum)); }
 
 private:
   int mNum;

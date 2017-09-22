@@ -14,37 +14,74 @@ public:
   static const MalDataPtr readStr(const str_t& str);
 
 private:
-  typedef std::string token_t;
-  typedef std::vector<token_t> token_list_t;
-  typedef std::vector<token_t>::iterator token_list_iterator_t;
 
-  static bool isOpenParen(const token_t& tok)
+  class CToken
   {
-    return tok == "(";
-  }
-
-  static bool isCloseParen(const token_t& tok)
-  {
-    return tok == ")";
-  }
-
-  static bool isNum(const token_t& tok)
-  {
-    return !tok.empty() && std::find_if(tok.begin(), tok.end(), [](char c)
+  public:
+    CToken(const std::string& val)
     {
-      return !std::isdigit(c);
-    }) == tok.end();
-  }
+      mValue = val;
+      trim(mValue);
+    }
 
-  token_t next()
+    bool isOpenParen() const
+    {
+      return mValue == "(";
+    }
+
+    bool isCloseParen() const
+    {
+      return mValue == ")";
+    }
+
+    bool isNum() const
+    {
+      return !mValue.empty() && std::find_if(mValue.begin(), mValue.end(), [](char c)
+      {
+        return !std::isdigit(c);
+      }) == mValue.end();
+    }
+
+    std::string Str()
+    {
+      return mValue;
+    }
+
+  private:
+    const char* ws = " \t\n\r\f\v";
+
+    std::string& rtrim(std::string& s)
+    {
+      s.erase(s.find_last_not_of(ws) + 1);
+      return s;
+    }
+
+    std::string& ltrim(std::string& s)
+    {
+      s.erase(0, s.find_first_not_of(ws));
+      return s;
+    }
+
+    std::string& trim(std::string& s)
+    {
+      return ltrim(rtrim(s));
+    }
+
+    std::string mValue;
+  };
+
+  typedef std::vector<CToken> token_list_t;
+  typedef std::vector<CToken>::iterator token_list_iterator_t;
+
+  CToken next()
   {
     assert(mCurrTok != mTokenList.end());
-    token_t result = *mCurrTok;
+    CToken result = *mCurrTok;
     mCurrTok++;
     return result;
   }
 
-  token_t peek()
+  CToken peek()
   {
     assert(mCurrTok != mTokenList.end());
     return *mCurrTok;
