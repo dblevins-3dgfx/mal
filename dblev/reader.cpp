@@ -1,6 +1,6 @@
-#include <regex>
 #include <iostream>
 #include <assert.h>
+#include <regex>
 
 #include "reader.h"
 
@@ -15,42 +15,14 @@ const MalDataPtr CReader::readStr(const str_t& str)
   return ast;
 }
 
-
-namespace {
-  const char* ws = " \t\n\r\f\v";
-  std::string& rtrim(std::string& s, const char* t = ws)
-  {
-    s.erase(s.find_last_not_of(t) + 1);
-    return s;
-  }
-
-  std::string& ltrim(std::string& s, const char* t = ws)
-  {
-    s.erase(0, s.find_first_not_of(t));
-    return s;
-  }
-
-  std::string& trim(std::string& s, const char* t = ws)
-  {
-    return ltrim(rtrim(s, t), t);
-  }
-}
-
 /////////////////////////////////////////////////////////////////////////////////
 void CReader::tokenizer(const str_t& str)
 {
   static const std::regex re("[\\s,]*(~@|[\\[\\]{}()'`~^@]|\"(?:\\\\.|[^\\\\\"])*\"|;.*|[^\\s\\[\\]{}('\"`,;)]*)");
-  std::smatch match;
 
-  auto tstr = str;
-  while (!tstr.empty() && std::regex_search(tstr, match, re))
-  {
-    token_t tok = match.str();
-    trim(tok);
-    mTokenList.push_back(tok);
-    tstr = match.suffix().str();
-  }
-
+  mTokenList.insert(mTokenList.end(),
+		    std::sregex_token_iterator(str.begin(), str.end(), re, 1),
+		    std::sregex_token_iterator());
   mCurrTok = mTokenList.begin();
 }
 
@@ -103,5 +75,3 @@ MalDataPtr CReader::readAtom()
 
   return result;
 }
-
-

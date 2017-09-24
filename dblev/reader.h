@@ -58,4 +58,5 @@ private:
 
   token_list_t mTokenList;
   token_list_iterator_t mCurrTok;
+
 };
