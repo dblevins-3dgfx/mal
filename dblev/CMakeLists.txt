@@ -17,6 +17,7 @@ set(step1_headers
    types.h
    reader.h
    printer.h
+   regex_strings.h
 )
 
 add_executable(step1_read_print  ${step1_source} ${step1_headers})

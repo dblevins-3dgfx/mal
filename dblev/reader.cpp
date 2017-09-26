@@ -3,6 +3,7 @@
 #include <regex>
 
 #include "reader.h"
+#include "regex_strings.h"
 
 /////////////////////////////////////////////////////////////////////////////////
 const MalDataPtr CReader::readStr(const str_t& str)
@@ -18,7 +19,7 @@ const MalDataPtr CReader::readStr(const str_t& str)
 /////////////////////////////////////////////////////////////////////////////////
 void CReader::tokenizer(const str_t& str)
 {
-  static const std::regex re("[\\s,]*(~@|[\\[\\]{}()'`~^@]|\"(?:\\\\.|[^\\\\\"])*\"|;.*|[^\\s\\[\\]{}('\"`,;)]*)");
+  static const std::regex re(LISP_REGEXP);
 
   mTokenList.insert(mTokenList.end(),
 		    std::sregex_token_iterator(str.begin(), str.end(), re, 1),
@@ -66,12 +67,20 @@ MalDataPtr CReader::readAtom()
   CToken tok = next();
   if (tok.isNum())
   {
-    result = std::make_shared<CMalNumber>(tok.Str());
+    result = std::make_shared<CMalNumber>(tok.str());
   }
   else
   {
-    result = std::make_shared<CMalSymbol>(tok.Str());
+    result = std::make_shared<CMalSymbol>(tok.str());
   }
 
   return result;
 }
+
+/////////////////////////////////////////////////////////////////////////////////
+bool CReader::CToken::isNum() const
+{
+  static const std::regex re(INTEGER_REGEXP);
+  return std::regex_match(mValue, re);
+}
+
