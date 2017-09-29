@@ -46,7 +46,7 @@ private:
 
   bool isCloseParen(const token_t& tok) const
   {
-    return tok == "";
+    return tok == ")";
   }
   bool isNum(const token_t& tok) const;
 

@@ -24,10 +24,6 @@ void CReader::tokenizer(const str_t& str)
   mTokenList.insert(mTokenList.end(),
   	            std::sregex_token_iterator(str.begin(), str.end(), re, 1),
   		    std::sregex_token_iterator());
-  for(auto tok : mTokenList)
-    {
-      std::cout << tok << std::endl;
-    }
   mCurrTok = mTokenList.begin();
 }
 
