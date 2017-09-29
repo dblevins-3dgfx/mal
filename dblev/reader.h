@@ -15,47 +15,19 @@ public:
 
 private:
 
-  class CToken
-  {
-  public:
-    CToken(const std::string& val)
-    {
-      mValue = val;
-    }
+  typedef std::string token_t;
+  typedef std::vector<token_t> token_list_t;
+  typedef std::vector<token_t>::iterator token_list_iterator_t;
 
-    bool isOpenParen() const
-    {
-      return mValue == "(";
-    }
-
-    bool isCloseParen() const
-    {
-      return mValue == ")";
-    }
-
-    bool isNum() const;
-
-    std::string str()
-    {
-      return mValue;
-    }
-
-  private:
-    std::string mValue;
-  };
-
-  typedef std::vector<CToken> token_list_t;
-  typedef std::vector<CToken>::iterator token_list_iterator_t;
-
-  CToken next()
+  token_t next()
   {
     assert(mCurrTok != mTokenList.end());
-    CToken result = *mCurrTok;
+    token_t result = *mCurrTok;
     mCurrTok++;
     return result;
   }
 
-  CToken peek()
+  token_t peek()
   {
     assert(mCurrTok != mTokenList.end());
     return *mCurrTok;
@@ -66,6 +38,17 @@ private:
   MalDataPtr readForm();
   MalDataPtr readList();
   MalDataPtr readAtom();
+
+  bool isOpenParen(const token_t& tok) const
+  {
+    return tok == "(";
+  }
+
+  bool isCloseParen(const token_t& tok) const
+  {
+    return tok == "";
+  }
+  bool isNum(const token_t& tok) const;
 
   token_list_t mTokenList;
   token_list_iterator_t mCurrTok;

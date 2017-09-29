@@ -22,8 +22,12 @@ void CReader::tokenizer(const str_t& str)
   static const std::regex re(LISP_REGEXP);
 
   mTokenList.insert(mTokenList.end(),
-		    std::sregex_token_iterator(str.begin(), str.end(), re, 1),
-		    std::sregex_token_iterator());
+  	            std::sregex_token_iterator(str.begin(), str.end(), re, 1),
+  		    std::sregex_token_iterator());
+  for(auto tok : mTokenList)
+    {
+      std::cout << tok << std::endl;
+    }
   mCurrTok = mTokenList.begin();
 }
 
@@ -32,7 +36,7 @@ MalDataPtr CReader::readForm()
 {
   MalDataPtr result;
 
-  if (peek().isOpenParen())
+  if (isOpenParen(peek()))
   {
     next(); // discard "("
     result = readList();
@@ -50,7 +54,7 @@ MalDataPtr CReader::readForm()
 MalDataPtr CReader::readList()
 {
   auto list = std::make_shared<CMalList>();
-  while (!peek().isCloseParen())
+  while (!isCloseParen(peek()))
   {
     auto form = readForm();
     list->Add(form);
@@ -64,23 +68,23 @@ MalDataPtr CReader::readAtom()
 {
   MalDataPtr result = nullptr;
 
-  CToken tok = next();
-  if (tok.isNum())
+  token_t tok = next();
+  if (isNum(tok))
   {
-    result = std::make_shared<CMalNumber>(tok.str());
+    result = std::make_shared<CMalNumber>(tok);
   }
   else
   {
-    result = std::make_shared<CMalSymbol>(tok.str());
+    result = std::make_shared<CMalSymbol>(tok);
   }
 
   return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-bool CReader::CToken::isNum() const
+bool CReader::isNum(const token_t& tok) const
 {
   static const std::regex re(INTEGER_REGEXP);
-  return std::regex_match(mValue, re);
+  return std::regex_match(tok, re);
 }
 
