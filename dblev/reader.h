@@ -21,16 +21,22 @@ private:
 
   token_t next()
   {
-    assert(mCurrTok != mTokenList.end());
-    token_t result = *mCurrTok;
-    mCurrTok++;
-    return result;
+    if (mCurrTok != mTokenList.end())
+    {
+      token_t result = *mCurrTok;
+      mCurrTok++;
+      return result;
+    }
+    throw 1;
   }
 
   token_t peek()
   {
-    assert(mCurrTok != mTokenList.end());
-    return *mCurrTok;
+    if (mCurrTok != mTokenList.end())
+    {
+      return *mCurrTok;
+    }
+    throw 1;
   }
 
 

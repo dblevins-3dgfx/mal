@@ -31,7 +31,14 @@ const str_t rep(const str_t& str)
 /////////////////////////////////////////////////////////////////////////////////
 const MalDataPtr READ(const str_t& str)
 {
-  return CReader::readStr(str);
+  try
+  {
+    return CReader::readStr(str);
+  }
+  catch (int)
+  {
+    return std::make_shared<CMalData>();
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////////
