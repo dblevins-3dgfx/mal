@@ -25,20 +25,20 @@ int main(int, char**)
 /////////////////////////////////////////////////////////////////////////////////
 const str_t rep(const str_t& str)
 {
-  return PRINT(EVAL(READ(str), ""));
+  try
+  {
+    return PRINT(EVAL(READ(str), ""));
+  }
+  catch (int)
+  {
+    return "Error";
+  }
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 const MalDataPtr READ(const str_t& str)
 {
-  try
-  {
     return CReader::readStr(str);
-  }
-  catch (int)
-  {
-    return std::make_shared<CMalData>();
-  }
 }
 
 /////////////////////////////////////////////////////////////////////////////////

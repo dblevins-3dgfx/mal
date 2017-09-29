@@ -27,7 +27,7 @@ private:
       mCurrTok++;
       return result;
     }
-    throw 1;
+    throw EOF;
   }
 
   token_t peek()
@@ -36,7 +36,7 @@ private:
     {
       return *mCurrTok;
     }
-    throw 1;
+    throw EOF;
   }
 
 
