@@ -21,22 +21,22 @@ private:
 
   token_t next()
   {
-    if (mCurrTok != mTokenList.end())
+    if (mCurrTok == mTokenList.end())
     {
-      token_t result = *mCurrTok;
-      mCurrTok++;
-      return result;
+      throw EOF;
     }
-    throw EOF;
+    token_t result = *mCurrTok;
+    mCurrTok++;
+    return result;
   }
 
   token_t peek()
   {
-    if (mCurrTok != mTokenList.end())
+    if (mCurrTok == mTokenList.end())
     {
-      return *mCurrTok;
+      throw EOF;
     }
-    throw EOF;
+    return *mCurrTok;
   }
 
 
