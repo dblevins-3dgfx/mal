@@ -37,7 +37,7 @@ const std::string rep(const std::string& str)
   {
     return PRINT(EVAL(READ(str), repl_env));
   }
-  catch (int)
+  catch (...)
   {
     return "Error";
   }

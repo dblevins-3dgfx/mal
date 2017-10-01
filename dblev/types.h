@@ -9,7 +9,6 @@
 
 class MalData;
 class MalList;
-typedef std::shared_ptr<MalData> MalDataPtr;
 
 class MalData
 {
@@ -27,6 +26,7 @@ public:
   virtual const MalList* GetMalList() const { return nullptr; }
   virtual const std::string GetPrStr() { return "nil"; }
 };
+typedef std::shared_ptr<MalData> MalDataPtr;
 
 
 class MalList final : public MalData
