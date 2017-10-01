@@ -27,10 +27,61 @@ int main(int, char**)
 const std::string rep(const std::string& str)
 {
   Env repl_env = {
-    { MalSymbol("+"), std::make_shared<MalFunction>( [](MalNumber a, MalNumber b) { return MalNumber(a.GetValue() + b.GetValue());  } ) },
-    { MalSymbol("-"), std::make_shared<MalFunction>( [](MalNumber a, MalNumber b) { return MalNumber(a.GetValue() - b.GetValue());  } ) },
-    { MalSymbol("*"), std::make_shared<MalFunction>( [](MalNumber a, MalNumber b) { return MalNumber(a.GetValue() * b.GetValue());  } ) },
-    { MalSymbol("/"), std::make_shared<MalFunction>( [](MalNumber a, MalNumber b) { return MalNumber(a.GetValue() / b.GetValue());  } ) }
+    {
+      MalSymbol("+"), std::make_shared<MalFunction>(
+      [](MalDataPtr args)
+      {
+        auto arglist = args->GetMalList()->GetList();
+        int sum = 0;
+        for (auto arg : arglist)
+        {
+          sum += arg->GetMalNumber()->GetValue();
+        }
+        return std::make_shared<MalNumber>(sum);
+      }
+    ) },
+
+    {
+      MalSymbol("-"), std::make_shared<MalFunction>(
+      [](MalDataPtr args)
+      {
+        auto arglist = args->GetMalList()->GetList();
+        int diff = 0;
+        for (auto arg : arglist)
+        {
+          diff -= arg->GetMalNumber()->GetValue();
+        }
+        return std::make_shared<MalNumber>(diff);
+      }
+    ) },
+
+   {
+      MalSymbol("*"), std::make_shared<MalFunction>(
+      [](MalDataPtr args)
+      {
+        auto arglist = args->GetMalList()->GetList();
+        int prod = 0;
+        for (auto arg : arglist)
+        {
+          prod *= arg->GetMalNumber()->GetValue();
+        }
+        return std::make_shared<MalNumber>(prod);
+      }
+    ) },
+
+    {
+      MalSymbol("-"), std::make_shared<MalFunction>(
+      [](MalDataPtr args)
+      {
+        auto arglist = args->GetMalList()->GetList();
+        int div = 0;
+        for (auto arg : arglist)
+        {
+          div /= arg->GetMalNumber()->GetValue();
+        }
+        return std::make_shared<MalNumber>(div);
+      }
+    ) },
   };
 
   try
@@ -66,11 +117,9 @@ const MalDataPtr EVAL(const MalDataPtr ast, const Env& env)
     }
     else {
       MalDataPtr evaluated = eval_ast(ast, env);
-      auto list = evaluated->GetMalList()->GetList();
-      auto f = *dynamic_cast<MalFunction*>(list[0].get());
-      auto a = *dynamic_cast<MalNumber*>(list[1].get());
-      auto b = *dynamic_cast<MalNumber*>(list[2].get());
-      result = std::make_shared<MalNumber>(f.Call(a, b).GetValue());
+      auto list = evaluated->GetMalList();
+      auto f = list->First()->GetMalFunction();
+      result = f->Call(list->Rest());
     }
   }
 
@@ -83,16 +132,17 @@ const MalDataPtr eval_ast(const MalDataPtr ast, const Env& env)
 
   if (ast->GetType() == MalData::symbol)
   {
-    MalSymbol* s = dynamic_cast<MalSymbol*>(ast.get());
-    result = env.at(*s);
+    result = env.at(*(ast->GetMalSymbol()));
   }
   else if (ast->GetType() == MalData::list)
   {
     auto list = std::make_shared<MalList>();
+
     for (auto elem : ast->GetMalList()->GetList())
     {
       list->Add(EVAL(elem, env));
     }
+
     result = list;
   }
 
