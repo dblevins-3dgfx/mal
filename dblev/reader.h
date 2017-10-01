@@ -7,11 +7,11 @@
 #include "types.h"
 
 /////////////////////////////////////////////////////////////////////////////////
-class CReader
+class Reader
 {
 public:
 
-  static const MalDataPtr readStr(const str_t& str);
+  static const MalDataPtr readStr(const std::string& str);
 
 private:
 
@@ -40,7 +40,7 @@ private:
   }
 
 
-  void tokenizer(const str_t& str);
+  void tokenizer(const std::string& str);
   MalDataPtr readForm();
   MalDataPtr readList();
   MalDataPtr readAtom();

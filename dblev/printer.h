@@ -3,10 +3,10 @@
 #include "types.h"
 
 /////////////////////////////////////////////////////////////////////////////////
-class CPrinter
+class Printer
 {
 public:
-  static const str_t pr_str(const MalDataPtr ast);
+  static const std::string pr_str(const MalDataPtr ast);
 
 private:
 };

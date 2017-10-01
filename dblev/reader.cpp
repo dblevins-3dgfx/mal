@@ -6,9 +6,9 @@
 #include "regex_strings.h"
 
 /////////////////////////////////////////////////////////////////////////////////
-const MalDataPtr CReader::readStr(const str_t& str)
+const MalDataPtr Reader::readStr(const std::string& str)
 {
-  CReader rdr;
+  Reader rdr;
 
   rdr.tokenizer(str);
   MalDataPtr ast = rdr.readForm();
@@ -17,18 +17,18 @@ const MalDataPtr CReader::readStr(const str_t& str)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-void CReader::tokenizer(const str_t& str)
+void Reader::tokenizer(const std::string& str)
 {
   static const std::regex re(LISP_REGEXP);
 
   mTokenList.insert(mTokenList.end(),
-  	            std::sregex_token_iterator(str.begin(), str.end(), re, 1),
-  		    std::sregex_token_iterator());
+                    std::sregex_token_iterator(str.begin(), str.end(), re, 1),
+                    std::sregex_token_iterator());
   mCurrTok = mTokenList.begin();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-MalDataPtr CReader::readForm()
+MalDataPtr Reader::readForm()
 {
   MalDataPtr result;
 
@@ -47,9 +47,9 @@ MalDataPtr CReader::readForm()
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-MalDataPtr CReader::readList()
+MalDataPtr Reader::readList()
 {
-  auto list = std::make_shared<CMalList>();
+  auto list = std::make_shared<MalList>();
   while (!isCloseParen(peek()))
   {
     auto form = readForm();
@@ -60,25 +60,25 @@ MalDataPtr CReader::readList()
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-MalDataPtr CReader::readAtom()
+MalDataPtr Reader::readAtom()
 {
   MalDataPtr result = nullptr;
 
   token_t tok = next();
   if (isNum(tok))
   {
-    result = std::make_shared<CMalNumber>(tok);
+    result = std::make_shared<MalNumber>(tok);
   }
   else
   {
-    result = std::make_shared<CMalSymbol>(tok);
+    result = std::make_shared<MalSymbol>(tok);
   }
 
   return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-bool CReader::isNum(const token_t& tok) const
+bool Reader::isNum(const token_t& tok) const
 {
   static const std::regex re(INTEGER_REGEXP);
   return std::regex_match(tok, re);

@@ -4,32 +4,32 @@
 #include <string>
 #include <vector>
 #include <assert.h>
+#include <map>
+#include <functional>
 
-typedef std::string str_t;
-typedef std::string env_t;
+class MalData;
+class MalList;
+typedef std::shared_ptr<MalData> MalDataPtr;
 
-class CMalData;
-class CMalList;
-typedef std::shared_ptr<CMalData> MalDataPtr;
-
-class CMalData
+class MalData
 {
 public:
   enum MalType {
     nil,
     symbol,
     number,
-    list
+    list,
+    function
   };
 
-  virtual ~CMalData() {};
+  virtual ~MalData() {};
   virtual MalType GetType() { return nil; }
-  virtual const CMalList* GetMalList() const { return nullptr; }
-  virtual const str_t GetPrStr() { return "nil"; }
+  virtual const MalList* GetMalList() const { return nullptr; }
+  virtual const std::string GetPrStr() { return "nil"; }
 };
 
 
-class CMalList final : public CMalData
+class MalList final : public MalData
 {
 public:
   typedef std::vector<MalDataPtr> MalDataPtrList;
@@ -38,7 +38,7 @@ public:
     mList.push_back(data);
   }
   MalType GetType() override { return list; }
-  const CMalList* GetMalList() const override { return this; }
+  const MalList* GetMalList() const override { return this; }
   const MalDataPtrList& GetList() const { return mList; }
 
 private:
@@ -46,31 +46,51 @@ private:
 };
 
 
-class CMalSymbol final : public CMalData
+class MalSymbol final : public MalData
 {
 public:
-  CMalSymbol(str_t str) :
+  MalSymbol(std::string str) :
     mStr(str)
   {}
   MalType GetType() override { return symbol; }
-  const str_t GetPrStr() override { return mStr; }
+  const std::string GetPrStr() override { return mStr; }
+  bool operator<(const MalSymbol& s) const { return mStr < s.mStr; }
 private:
-  str_t   mStr;
+  std::string   mStr;
 };
 
-class CMalNumber final : public CMalData
+class MalNumber final : public MalData
 {
 public:
-  CMalNumber(str_t str) :
+  MalNumber(std::string str) :
     mNum(atoi(str.c_str()))
+  {}
+  MalNumber(int num) :
+    mNum(num)
   {}
 
   MalType GetType() override { return number; }
-  const str_t GetPrStr() override { return str_t(std::to_string(mNum)); }
+  const std::string GetPrStr() override { return std::string(std::to_string(mNum)); }
+  int GetValue() { return mNum;  }
 
 private:
   int mNum;
 };
 
 
+class MalFunction final : public MalData
+{
+public:
+  typedef std::function< MalNumber(MalNumber, MalNumber) > NumericFunc;
+  MalFunction(const NumericFunc& f)
+  {
+    mFunc = f;
+  }
+  MalType GetType() override { return function; }
+  MalNumber Call(MalNumber a, MalNumber b) { return mFunc(a, b); }
 
+private:
+  NumericFunc mFunc;
+};
+
+typedef std::map< MalSymbol, MalDataPtr > Env;

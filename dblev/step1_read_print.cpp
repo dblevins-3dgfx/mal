@@ -4,10 +4,10 @@
 #include "reader.h"
 #include "printer.h"
 
-const MalDataPtr READ(const str_t& str);
-const MalDataPtr EVAL(const MalDataPtr ast, const env_t& env);
-const str_t PRINT(const MalDataPtr exp);
-const str_t rep(const str_t& str);
+const MalDataPtr READ(const std::string& str);
+const MalDataPtr EVAL(const MalDataPtr ast, const Env& env);
+const std::string PRINT(const MalDataPtr exp);
+const std::string rep(const std::string& str);
 
 /////////////////////////////////////////////////////////////////////////////////
 int main(int, char**)
@@ -16,18 +16,18 @@ int main(int, char**)
   while (true)
   {
     std::cout << prompt;
-    str_t str;
+    std::string str;
     std::getline(std::cin, str);
     std::cout << rep(str) << std::endl;
   }
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-const str_t rep(const str_t& str)
+const std::string rep(const std::string& str)
 {
   try
   {
-    return PRINT(EVAL(READ(str), ""));
+    return PRINT(EVAL(READ(str), Env()));
   }
   catch (int)
   {
@@ -36,19 +36,19 @@ const str_t rep(const str_t& str)
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-const MalDataPtr READ(const str_t& str)
+const MalDataPtr READ(const std::string& str)
 {
-    return CReader::readStr(str);
+    return Reader::readStr(str);
 }
 
 /////////////////////////////////////////////////////////////////////////////////
-const MalDataPtr EVAL(const MalDataPtr ast, const env_t&)
+const MalDataPtr EVAL(const MalDataPtr ast, const Env&)
 {
   return ast;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-const str_t PRINT(const MalDataPtr exp)
+const std::string PRINT(const MalDataPtr exp)
 {
-  return CPrinter::pr_str(exp);
+  return Printer::pr_str(exp);
 }

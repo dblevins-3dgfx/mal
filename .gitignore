@@ -140,7 +140,3 @@ elm/*.js
 *.sdf
 *.sln
 *.opendb
-dblev/step1_read_print.dir/
-dblev/Win32/Debug/ZERO_CHECK/ZERO_CHECK.tlog/custombuild.command.1.tlog
-dblev/Win32/
-dblev/step0_repl.dir/

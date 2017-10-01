@@ -1,15 +1,15 @@
 #include "printer.h"
 
 /////////////////////////////////////////////////////////////////////////////////
-const str_t CPrinter::pr_str(const MalDataPtr ast)
+const std::string Printer::pr_str(const MalDataPtr ast)
 {
-  str_t result = "";
+  std::string result = "";
 
   if (auto list = ast->GetMalList())
   {
     result += "(";
     bool first = true;
-    for (auto e : list->GetList())
+    for (const auto& e : list->GetList())
     {
       if (first)
       {
