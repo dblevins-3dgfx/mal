@@ -29,57 +29,58 @@ const std::string rep(const std::string& str)
   Env repl_env = {
     {
       MalSymbol("+"), std::make_shared<MalFunction>(
-      [](MalDataPtr args)
+      [](MalListPtr args)
       {
-        auto arglist = args->GetMalList()->GetList();
-        int sum = 0;
-        for (auto arg : arglist)
+        auto arglist = args->GetList();
+        int result = arglist[0]->GetMalNumber()->GetValue();
+        for (MalList::MalDataPtrList::iterator arg = arglist.begin() + 1; arg != arglist.end(); arg++)
         {
-          sum += arg->GetMalNumber()->GetValue();
+          result += (*arg)->GetMalNumber()->GetValue();
         }
-        return std::make_shared<MalNumber>(sum);
+        return std::make_shared<MalNumber>(result);
       }
     ) },
 
     {
       MalSymbol("-"), std::make_shared<MalFunction>(
-      [](MalDataPtr args)
+      [](MalListPtr args)
       {
-        auto arglist = args->GetMalList()->GetList();
-        int diff = 0;
-        for (auto arg : arglist)
+        auto arglist = args->GetList();
+        int result = arglist[0]->GetMalNumber()->GetValue();
+        for (MalList::MalDataPtrList::iterator arg = arglist.begin() + 1; arg != arglist.end(); arg++)
         {
-          diff -= arg->GetMalNumber()->GetValue();
+          result -= (*arg)->GetMalNumber()->GetValue();
         }
-        return std::make_shared<MalNumber>(diff);
+        return std::make_shared<MalNumber>(result);
       }
     ) },
 
    {
       MalSymbol("*"), std::make_shared<MalFunction>(
-      [](MalDataPtr args)
+      [](MalListPtr args)
       {
-        auto arglist = args->GetMalList()->GetList();
-        int prod = 0;
-        for (auto arg : arglist)
+        auto arglist = args->GetList();
+        int result = arglist[0]->GetMalNumber()->GetValue();
+        for (MalList::MalDataPtrList::iterator arg = arglist.begin() + 1; arg != arglist.end(); arg++)
         {
-          prod *= arg->GetMalNumber()->GetValue();
+          result *= (*arg)->GetMalNumber()->GetValue();
         }
-        return std::make_shared<MalNumber>(prod);
+        return std::make_shared<MalNumber>(result);
       }
     ) },
 
     {
-      MalSymbol("-"), std::make_shared<MalFunction>(
-      [](MalDataPtr args)
+      MalSymbol("/"), std::make_shared<MalFunction>(
+      [](MalListPtr args)
       {
-        auto arglist = args->GetMalList()->GetList();
-        int div = 0;
-        for (auto arg : arglist)
+        auto arglist = args->GetList();
+        int result = arglist[0]->GetMalNumber()->GetValue();
+        for (MalList::MalDataPtrList::iterator arg = arglist.begin() + 1; arg != arglist.end(); arg++)
         {
-          div /= arg->GetMalNumber()->GetValue();
+          result /= (*arg)->GetMalNumber()->GetValue();
         }
-        return std::make_shared<MalNumber>(div);
+
+        return std::make_shared<MalNumber>(result);
       }
     ) },
   };

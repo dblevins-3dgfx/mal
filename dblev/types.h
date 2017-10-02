@@ -13,6 +13,13 @@ class MalSymbol;
 class MalNumber;
 class MalFunction;
 
+typedef std::shared_ptr<MalData> MalDataPtr;
+typedef std::shared_ptr<MalList> MalListPtr;
+typedef std::shared_ptr<MalSymbol> MalSymbolPtr;
+typedef std::shared_ptr<MalNumber> MalNumberPtr;
+typedef std::shared_ptr<MalFunction> MalFunctionPtr;
+
+/////////////////////////////////////////////////////////////////////////////////
 class MalData
 {
 public:
@@ -34,9 +41,8 @@ public:
   virtual const MalFunction* GetMalFunction() const { return nullptr; }
 
 };
-typedef std::shared_ptr<MalData> MalDataPtr;
 
-
+/////////////////////////////////////////////////////////////////////////////////
 class MalList final : public MalData
 {
 public:
@@ -53,9 +59,9 @@ public:
   {
     return mList[0];
   }
-  MalDataPtr Rest() const
+  MalListPtr Rest() const
   {
-    auto result = std::make_shared<MalList>();
+    MalListPtr result = std::make_shared<MalList>();
     for (auto i = mList.begin() + 1; i != mList.end(); i++)
     {
       result->Add(*i);
@@ -67,7 +73,7 @@ private:
   MalDataPtrList mList;
 };
 
-
+/////////////////////////////////////////////////////////////////////////////////
 class MalSymbol final : public MalData
 {
 public:
@@ -82,6 +88,7 @@ private:
   std::string   mStr;
 };
 
+/////////////////////////////////////////////////////////////////////////////////
 class MalNumber final : public MalData
 {
 public:
@@ -101,17 +108,17 @@ private:
   int mNum;
 };
 
-
+/////////////////////////////////////////////////////////////////////////////////
 class MalFunction final : public MalData
 {
 public:
-  typedef std::function< MalDataPtr(MalDataPtr) > Func;
+  typedef std::function< MalDataPtr(MalListPtr) > Func;
   MalFunction(const Func& f)
   {
     mFunc = f;
   }
   MalType GetType() override { return function; }
-  MalDataPtr Call(MalDataPtr args) const { return mFunc(args); }
+  MalDataPtr Call(MalListPtr args) const { return mFunc(args); }
   const MalFunction* GetMalFunction() const override { return this; }
 
 private:
