@@ -3,6 +3,7 @@
 #include "types.h"
 #include "reader.h"
 #include "printer.h"
+#include "env.h"
 
 const MalDataPtr READ(const std::string& str);
 const MalDataPtr EVAL(const MalDataPtr ast, const Env& env);

@@ -42,6 +42,24 @@ public:
 
 };
 
+
+
+/////////////////////////////////////////////////////////////////////////////////
+class MalSymbol final : public MalData
+{
+public:
+  MalSymbol(std::string str) :
+    mStr(str)
+  {}
+  MalType GetType() override { return symbol; }
+  const std::string GetPrStr() override { return mStr; }
+  bool operator<(const MalSymbol& s) const { return mStr < s.mStr; }
+  bool operator==(const MalSymbol& s) const { return mStr == s.mStr; }
+  const MalSymbol* GetMalSymbol() const override { return this; }
+private:
+  std::string   mStr;
+};
+
 /////////////////////////////////////////////////////////////////////////////////
 class MalList final : public MalData
 {
@@ -68,24 +86,18 @@ public:
     }
     return result;
   }
+  bool isSpecial(std::string key) const
+  {
+    bool result = false;
+    if (mList[0]->GetType() == symbol)
+    {
+      result = (*(mList[0]->GetMalSymbol()) == MalSymbol(key));
+    }
+    return result;
+  }
 
 private:
   MalDataPtrList mList;
-};
-
-/////////////////////////////////////////////////////////////////////////////////
-class MalSymbol final : public MalData
-{
-public:
-  MalSymbol(std::string str) :
-    mStr(str)
-  {}
-  MalType GetType() override { return symbol; }
-  const std::string GetPrStr() override { return mStr; }
-  bool operator<(const MalSymbol& s) const { return mStr < s.mStr; }
-  const MalSymbol* GetMalSymbol() const override { return this; }
-private:
-  std::string   mStr;
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -124,5 +136,3 @@ public:
 private:
   Func mFunc;
 };
-
-typedef std::map< MalSymbol, MalDataPtr > Env;
