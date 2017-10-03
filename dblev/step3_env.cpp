@@ -118,12 +118,20 @@ const MalDataPtr EVAL(const MalDataPtr ast, Env& env)
     else if (ast->GetMalList()->isSpecial("def!"))
     {
       MalSymbol s = *(ast->GetMalList()->GetList()[1]->GetMalSymbol());
-      result = eval_ast(ast->GetMalList()->GetList()[2], env);
+      result = EVAL(ast->GetMalList()->GetList()[2], env);
       env.Set(s, result);
     }
     else if (ast->GetMalList()->isSpecial("let*"))
     {
-
+      Env let_env(&env);
+      auto symlist = ast->GetMalList()->GetList()[1]->GetMalList()->GetList();
+      for (auto i = symlist.begin(); i != symlist.end(); i += 2)
+      {
+        auto sym = *((*i)->GetMalSymbol());
+        auto val = *(i + 1);
+        let_env.Set(sym, EVAL(val, let_env));
+      }
+      result = EVAL(ast->GetMalList()->GetList()[2], let_env);
     }
     else {
       MalDataPtr evaluated = eval_ast(ast, env);
