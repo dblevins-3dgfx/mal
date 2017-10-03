@@ -19,6 +19,12 @@ typedef std::shared_ptr<MalSymbol> MalSymbolPtr;
 typedef std::shared_ptr<MalNumber> MalNumberPtr;
 typedef std::shared_ptr<MalFunction> MalFunctionPtr;
 
+enum ErrorCode
+{
+  INCOMPLETE_SEXPR = 0,
+  UNDEFINED_SYMBOL
+};
+
 /////////////////////////////////////////////////////////////////////////////////
 class MalData
 {

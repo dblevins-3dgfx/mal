@@ -23,7 +23,7 @@ private:
   {
     if (mCurrTok == mTokenList.end())
     {
-      throw EOF;
+      throw INCOMPLETE_SEXPR;
     }
     token_t result = *mCurrTok;
     mCurrTok++;
@@ -34,7 +34,7 @@ private:
   {
     if (mCurrTok == mTokenList.end())
     {
-      throw EOF;
+      throw INCOMPLETE_SEXPR;
     }
     return *mCurrTok;
   }

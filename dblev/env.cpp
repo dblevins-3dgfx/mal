@@ -33,5 +33,9 @@ MalDataPtr Env::Get(const MalSymbol& sym)
   {
     result = env->mData[sym];
   }
+  else
+  {
+    result = std::make_shared<MalData>();
+  }
   return result;
 }

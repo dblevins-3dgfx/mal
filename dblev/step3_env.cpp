@@ -136,8 +136,14 @@ const MalDataPtr EVAL(const MalDataPtr ast, Env& env)
     else {
       MalDataPtr evaluated = eval_ast(ast, env);
       auto list = evaluated->GetMalList();
-      auto f = list->First()->GetMalFunction();
-      result = f->Call(list->Rest());
+      if (auto f = list->First()->GetMalFunction())
+      {
+        result = f->Call(list->Rest());
+      }
+      else
+      {
+        throw UNDEFINED_SYMBOL;
+      }
     }
   }
 
