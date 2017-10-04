@@ -35,11 +35,11 @@ void InitializeEnv(Env& repl_env)
   repl_env.Set(MalSymbol("+"), std::make_shared<MalFunction>(
     [](MalListPtr args)
   {
-    auto arglist = args->GetList();
-    int result = MalNumber(arglist[0]).GetValue();
-    for (MalList::MalDataPtrList::iterator arg = arglist.begin() + 1; arg != arglist.end(); arg++)
+    MalList arglist(args);
+    int result = MalNumber(arglist[0]);
+    for (MalList::iterator arg = arglist.begin() + 1; arg != arglist.end(); arg++)
     {
-      result += MalNumber(*arg).GetValue();
+      result += MalNumber(*arg);
     }
     return std::make_shared<MalNumber>(result);
   }));
@@ -47,11 +47,11 @@ void InitializeEnv(Env& repl_env)
   repl_env.Set(MalSymbol("-"), std::make_shared<MalFunction>(
     [](MalListPtr args)
   {
-    auto arglist = args->GetList();
-    int result = MalNumber(arglist[0]).GetValue();
-    for (MalList::MalDataPtrList::iterator arg = arglist.begin() + 1; arg != arglist.end(); arg++)
+    MalList arglist(args);
+    int result = MalNumber(arglist[0]);
+    for (MalList::iterator arg = arglist.begin() + 1; arg != arglist.end(); arg++)
     {
-      result -= MalNumber(*arg).GetValue();
+      result -= MalNumber(*arg);
     }
     return std::make_shared<MalNumber>(result);
   }));
@@ -59,11 +59,11 @@ void InitializeEnv(Env& repl_env)
   repl_env.Set(MalSymbol("*"), std::make_shared<MalFunction>(
     [](MalListPtr args)
   {
-    auto arglist = args->GetList();
-    int result = MalNumber(arglist[0]).GetValue();
-    for (MalList::MalDataPtrList::iterator arg = arglist.begin() + 1; arg != arglist.end(); arg++)
+    MalList arglist(args);
+    int result = MalNumber(arglist[0]);
+    for (MalList::iterator arg = arglist.begin() + 1; arg != arglist.end(); arg++)
     {
-      result *= MalNumber(*arg).GetValue();
+      result *= MalNumber(*arg);
     }
     return std::make_shared<MalNumber>(result);
   }));
@@ -71,11 +71,11 @@ void InitializeEnv(Env& repl_env)
   repl_env.Set(MalSymbol("/"), std::make_shared<MalFunction>(
     [](MalListPtr args)
   {
-    auto arglist = args->GetList();
-    int result = MalNumber(arglist[0]).GetValue();
-    for (MalList::MalDataPtrList::iterator arg = arglist.begin() + 1; arg != arglist.end(); arg++)
+    MalList arglist(args);
+    int result = MalNumber(arglist[0]);
+    for (MalList::iterator arg = arglist.begin() + 1; arg != arglist.end(); arg++)
     {
-      result /= MalNumber(*arg).GetValue();
+      result /= MalNumber(*arg);
     }
     return std::make_shared<MalNumber>(result);
   }));
@@ -111,35 +111,36 @@ const MalDataPtr EVAL(const MalDataPtr ast, Env& env)
   }
   else
   {
-    if (MalList(ast).GetList().empty())
+    MalList list(ast);
+    if (list.empty())
     {
       result = ast;
     }
-    else if (MalList(ast).isSpecial("def!"))
+    else if (list.isSpecial("def!"))
     {
-      MalSymbol s(MalList(ast).GetList()[1]);
-      result = EVAL(MalList(ast).GetList()[2], env);
+      MalSymbol s(list[1]);
+      result = EVAL(list[2], env);
       env.Set(s, result);
     }
-    else if (MalList(ast).isSpecial("let*"))
+    else if (list.isSpecial("let*"))
     {
       Env let_env(&env);
-      auto symlist = MalList(MalList(ast).GetList()[1]).GetList();
+      MalList symlist(list[1]);
       for (auto i = symlist.begin(); i != symlist.end(); i += 2)
       {
         MalSymbol sym(*i);
         auto val = *(i + 1);
         let_env.Set(sym, EVAL(val, let_env));
       }
-      result = EVAL(MalList(ast).GetList()[2], let_env);
+      result = EVAL(list[2], let_env);
     }
     else {
       MalDataPtr evaluated = eval_ast(ast, env);
-      MalList list(evaluated);
-      if (list.First()->GetType() == MalData::function)
+      MalList elist(evaluated);
+      if (elist.First()->GetType() == MalData::function)
       {
-        MalFunction f(list.First());
-        result = f.Call(list.Rest());
+        MalFunction f(elist.First());
+        result = f.Call(elist.Rest());
       }
       else
       {
@@ -164,9 +165,10 @@ const MalDataPtr eval_ast(const MalDataPtr ast, Env& env)
     MalList list(ast);
     auto elist = std::make_shared<MalList>();
 
-    for (auto elem : list.GetList())
+    //ToDo: try std::transform
+    for (auto elem : list)
     {
-      elist->Add(EVAL(elem, env));
+      elist->push_back(EVAL(elem, env));
     }
 
     result = elist;

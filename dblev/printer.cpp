@@ -10,7 +10,7 @@ const std::string Printer::pr_str(const MalDataPtr ast)
     MalList list(ast);
     result += "(";
     bool first = true;
-    for (const auto& e : list.GetList())
+    for (const auto& e : list)
     {
       if (first)
       {

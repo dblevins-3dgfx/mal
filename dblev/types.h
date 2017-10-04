@@ -74,6 +74,7 @@ class MalList final : public MalData
 {
 public:
   typedef std::vector<MalDataPtr> MalDataPtrList;
+  typedef MalDataPtrList::iterator iterator;
 
   MalList() {}
 
@@ -85,25 +86,23 @@ public:
     }
   }
 
-  void Add(MalDataPtr data)
-  {
-    mList.push_back(data);
-  }
   MalType GetType() override { return list; }
-  const MalDataPtrList& GetList() const { return mList; }
+
   MalDataPtr First() const
   {
     return mList[0];
   }
+
   MalListPtr Rest() const
   {
     MalListPtr result = std::make_shared<MalList>();
     for (auto i = mList.begin() + 1; i != mList.end(); i++)
     {
-      result->Add(*i);
+      result->push_back(*i);
     }
     return result;
   }
+
   bool isSpecial(std::string key) const
   {
     bool result = false;
@@ -113,6 +112,14 @@ public:
     }
     return result;
   }
+
+  // Basic Container stuff
+  iterator begin() { return mList.begin(); }
+  iterator end() { return mList.end(); }
+  MalDataPtr operator[](int idx) { return mList[idx]; }
+  bool empty() { return mList.empty(); }
+  size_t size() { return mList.size(); }
+  void push_back(MalDataPtr data) { mList.push_back(data); }
 
 private:
   MalDataPtrList mList;
@@ -136,12 +143,20 @@ public:
     {
       mNum = dn->mNum;
     }
+    else
+    {
+      mNum = 0;
+    }
   }
 
 
   MalType GetType() override { return number; }
   const std::string GetPrStr() override { return std::string(std::to_string(mNum)); }
-  int GetValue() const { return mNum;  }
+
+  // int conversion
+  operator int() {
+    return mNum;
+  }
 
 private:
   int mNum;

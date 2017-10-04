@@ -53,7 +53,7 @@ MalDataPtr Reader::readList()
   while (!isCloseParen(peek()))
   {
     auto form = readForm();
-    list->Add(form);
+    list->push_back(form);
   }
 
   return list;
