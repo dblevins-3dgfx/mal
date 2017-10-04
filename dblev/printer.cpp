@@ -5,11 +5,12 @@ const std::string Printer::pr_str(const MalDataPtr ast)
 {
   std::string result = "";
 
-  if (auto list = ast->GetMalList())
+  if (ast->GetType() == MalData::list)
   {
+    MalList list(ast);
     result += "(";
     bool first = true;
-    for (const auto& e : list->GetList())
+    for (const auto& e : list.GetList())
     {
       if (first)
       {

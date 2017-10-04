@@ -36,10 +36,10 @@ void InitializeEnv(Env& repl_env)
     [](MalListPtr args)
   {
     auto arglist = args->GetList();
-    int result = arglist[0]->GetMalNumber()->GetValue();
+    int result = MalNumber(arglist[0]).GetValue();
     for (MalList::MalDataPtrList::iterator arg = arglist.begin() + 1; arg != arglist.end(); arg++)
     {
-      result += (*arg)->GetMalNumber()->GetValue();
+      result += MalNumber(*arg).GetValue();
     }
     return std::make_shared<MalNumber>(result);
   }));
@@ -48,10 +48,10 @@ void InitializeEnv(Env& repl_env)
     [](MalListPtr args)
   {
     auto arglist = args->GetList();
-    int result = arglist[0]->GetMalNumber()->GetValue();
+    int result = MalNumber(arglist[0]).GetValue();
     for (MalList::MalDataPtrList::iterator arg = arglist.begin() + 1; arg != arglist.end(); arg++)
     {
-      result -= (*arg)->GetMalNumber()->GetValue();
+      result -= MalNumber(*arg).GetValue();
     }
     return std::make_shared<MalNumber>(result);
   }));
@@ -60,10 +60,10 @@ void InitializeEnv(Env& repl_env)
     [](MalListPtr args)
   {
     auto arglist = args->GetList();
-    int result = arglist[0]->GetMalNumber()->GetValue();
+    int result = MalNumber(arglist[0]).GetValue();
     for (MalList::MalDataPtrList::iterator arg = arglist.begin() + 1; arg != arglist.end(); arg++)
     {
-      result *= (*arg)->GetMalNumber()->GetValue();
+      result *= MalNumber(*arg).GetValue();
     }
     return std::make_shared<MalNumber>(result);
   }));
@@ -72,10 +72,10 @@ void InitializeEnv(Env& repl_env)
     [](MalListPtr args)
   {
     auto arglist = args->GetList();
-    int result = arglist[0]->GetMalNumber()->GetValue();
+    int result = MalNumber(arglist[0]).GetValue();
     for (MalList::MalDataPtrList::iterator arg = arglist.begin() + 1; arg != arglist.end(); arg++)
     {
-      result /= (*arg)->GetMalNumber()->GetValue();
+      result /= MalNumber(*arg).GetValue();
     }
     return std::make_shared<MalNumber>(result);
   }));
@@ -111,34 +111,35 @@ const MalDataPtr EVAL(const MalDataPtr ast, Env& env)
   }
   else
   {
-    if (ast->GetMalList()->GetList().empty())
+    if (MalList(ast).GetList().empty())
     {
       result = ast;
     }
-    else if (ast->GetMalList()->isSpecial("def!"))
+    else if (MalList(ast).isSpecial("def!"))
     {
-      MalSymbol s = *(ast->GetMalList()->GetList()[1]->GetMalSymbol());
-      result = EVAL(ast->GetMalList()->GetList()[2], env);
+      MalSymbol s(MalList(ast).GetList()[1]);
+      result = EVAL(MalList(ast).GetList()[2], env);
       env.Set(s, result);
     }
-    else if (ast->GetMalList()->isSpecial("let*"))
+    else if (MalList(ast).isSpecial("let*"))
     {
       Env let_env(&env);
-      auto symlist = ast->GetMalList()->GetList()[1]->GetMalList()->GetList();
+      auto symlist = MalList(MalList(ast).GetList()[1]).GetList();
       for (auto i = symlist.begin(); i != symlist.end(); i += 2)
       {
-        auto sym = *((*i)->GetMalSymbol());
+        MalSymbol sym(*i);
         auto val = *(i + 1);
         let_env.Set(sym, EVAL(val, let_env));
       }
-      result = EVAL(ast->GetMalList()->GetList()[2], let_env);
+      result = EVAL(MalList(ast).GetList()[2], let_env);
     }
     else {
       MalDataPtr evaluated = eval_ast(ast, env);
-      auto list = evaluated->GetMalList();
-      if (auto f = list->First()->GetMalFunction())
+      MalList list(evaluated);
+      if (list.First()->GetType() == MalData::function)
       {
-        result = f->Call(list->Rest());
+        MalFunction f(list.First());
+        result = f.Call(list.Rest());
       }
       else
       {
@@ -156,18 +157,19 @@ const MalDataPtr eval_ast(const MalDataPtr ast, Env& env)
 
   if (ast->GetType() == MalData::symbol)
   {
-    result = env.Get(*(ast->GetMalSymbol()));
+    result = env.Get(MalSymbol(ast));
   }
   else if (ast->GetType() == MalData::list)
   {
-    auto list = std::make_shared<MalList>();
+    MalList list(ast);
+    auto elist = std::make_shared<MalList>();
 
-    for (auto elem : ast->GetMalList()->GetList())
+    for (auto elem : list.GetList())
     {
-      list->Add(EVAL(elem, env));
+      elist->Add(EVAL(elem, env));
     }
 
-    result = list;
+    result = elist;
   }
 
   return result;

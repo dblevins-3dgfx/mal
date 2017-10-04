@@ -40,12 +40,6 @@ public:
   virtual ~MalData() {};
   virtual MalType GetType() { return nil; }
   virtual const std::string GetPrStr() { return "nil"; }
-
-  virtual const MalList*     GetMalList() const { return nullptr; }
-  virtual const MalSymbol*   GetMalSymbol() const { return nullptr; }
-  virtual const MalNumber*   GetMalNumber() const { return nullptr; }
-  virtual const MalFunction* GetMalFunction() const { return nullptr; }
-
 };
 
 
@@ -57,11 +51,20 @@ public:
   MalSymbol(std::string str) :
     mStr(str)
   {}
+
+  MalSymbol(MalDataPtr d)
+  {
+    if (auto ds = dynamic_cast<MalSymbol*>(d.get()))
+    {
+      mStr = ds->mStr;
+    }
+  }
+
   MalType GetType() override { return symbol; }
   const std::string GetPrStr() override { return mStr; }
   bool operator<(const MalSymbol& s) const { return mStr < s.mStr; }
   bool operator==(const MalSymbol& s) const { return mStr == s.mStr; }
-  const MalSymbol* GetMalSymbol() const override { return this; }
+
 private:
   std::string   mStr;
 };
@@ -72,12 +75,21 @@ class MalList final : public MalData
 public:
   typedef std::vector<MalDataPtr> MalDataPtrList;
 
+  MalList() {}
+
+  MalList(MalDataPtr d)
+  {
+    if (auto dl = dynamic_cast<MalList*>(d.get()))
+    {
+      mList = dl->mList;
+    }
+  }
+
   void Add(MalDataPtr data)
   {
     mList.push_back(data);
   }
   MalType GetType() override { return list; }
-  const MalList* GetMalList() const override { return this; }
   const MalDataPtrList& GetList() const { return mList; }
   MalDataPtr First() const
   {
@@ -97,7 +109,7 @@ public:
     bool result = false;
     if (mList[0]->GetType() == symbol)
     {
-      result = (*(mList[0]->GetMalSymbol()) == MalSymbol(key));
+      result = (MalSymbol(mList[0]) == MalSymbol(key));
     }
     return result;
   }
@@ -113,14 +125,23 @@ public:
   MalNumber(std::string str) :
     mNum(atoi(str.c_str()))
   {}
+
   MalNumber(int num) :
     mNum(num)
   {}
 
+  MalNumber(MalDataPtr d)
+  {
+    if (auto dn = dynamic_cast<MalNumber*>(d.get()))
+    {
+      mNum = dn->mNum;
+    }
+  }
+
+
   MalType GetType() override { return number; }
   const std::string GetPrStr() override { return std::string(std::to_string(mNum)); }
   int GetValue() const { return mNum;  }
-  const MalNumber* GetMalNumber() const override { return this; }
 
 private:
   int mNum;
@@ -135,9 +156,17 @@ public:
   {
     mFunc = f;
   }
+
+  MalFunction(MalDataPtr d)
+  {
+    if (auto df = dynamic_cast<MalFunction*>(d.get()))
+    {
+      mFunc = df->mFunc;
+    }
+  }
+
   MalType GetType() override { return function; }
   MalDataPtr Call(MalListPtr args) const { return mFunc(args); }
-  const MalFunction* GetMalFunction() const override { return this; }
 
 private:
   Func mFunc;
