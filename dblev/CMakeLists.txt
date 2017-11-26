@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 2.6)
 project (MAL)
 
+set (CMAKE_CXX_STANDARD 11)
+
 set(source
   reader.cpp
   printer.cpp
